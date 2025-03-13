@@ -1,21 +1,13 @@
+import { request } from "../utils/requester";
+
 const baseUrl = `http://localhost:3030/jsonstore/games`;
 
+// By abstracting the fetch logic to a utility function, we make sure we dont repeat ourselves
+// The service is now responsible for handling the method, url and data that is being send to the database
 export default {
-    async create(gameData) {
-        try {
-            const response = await fetch(baseUrl, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(gameData)
-            });
-
-            const result = await response.json();
-
-            return result;
-        } catch (error) {
-            console.log(error);
-        }
+    create(gameData) {
+        // Using the abstracted requester module to make a POST request to the server
+        // It does not need to be awaiting here since where it is being called, and the request util function is being awaited
+        return request("POST", baseUrl, gameData);
     }
 };
