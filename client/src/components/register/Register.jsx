@@ -1,3 +1,5 @@
+import { Link } from "react-router";
+
 export default function Register() {
     return (
         < section id="register-page" className="content auth" >
@@ -14,7 +16,7 @@ export default function Register() {
                     <input className="btn submit" type="submit" defaultValue="Register" />
                     <p className="field">
                         <span>
-                            If you already have profile click <a href="#">here</a>
+                            If you already have profile click <Link to="/login">here</Link>
                         </span>
                     </p>
                 </div>
