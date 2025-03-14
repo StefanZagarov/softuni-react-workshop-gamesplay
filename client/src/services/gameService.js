@@ -12,6 +12,9 @@ export default {
         const gamesArray = Object.values(result);
         return gamesArray;
     },
+    getOne(gameId) {
+        return request.get(`${baseUrl}/${gameId}`);
+    },
     create(gameData) {
         // Using the abstracted requester module to make a POST request to the server
         // It does not need to be awaiting here since where it is being called, and the request util function is being awaited

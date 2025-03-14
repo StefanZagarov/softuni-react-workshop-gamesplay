@@ -23,6 +23,14 @@
         "summary": "Monster Hunter: World is a 2018 action role-playing game developed and published by Capcom. The fifth mainline installment in the Monster Hunter series, it was released worldwide for PlayStation 4 and Xbox One in January 2018, with a Windows version following in August 2018. In the game, the player takes the role of a Hunter, tasked to hunt down and either kill or trap monsters that roam in one of several environmental spaces. If successful, the player is rewarded through loot consisting of parts from the monster and other elements that are used to craft weapons and armor, amongst other equipment. The game's core loop has the player crafting appropriate gear to be able to hunt down more difficult monsters, which in turn provide parts that lead to more powerful gear. Players may hunt alone or in a group of up to four players via the game's online multiplayer.",
         "_id": "c62b0b22-fc8c-4f8c-a0e6-284c547453a5"
     },
+    "008e5e69-d665-432c-aecd-ef253588357e": {
+        "title": "Monster Hunter 4 Ultimate",
+        "category": "Action, RPG",
+        "maxLevel": "16",
+        "imageUrl": "https://assets-prd.ignimgs.com/2022/02/07/monsterhunter4ultimate-sq-1644270519616.jpg",
+        "summary": "Monster Hunter 4 Ultimate will take players to new heights, literally, with the introduction of more vertical and lateral movement than ever. An expanded repertoire of actions will create more dynamic hunting experiences with fluid climbing motions and the ability to jump attack from walls or ledges. In addition, players will be able to ride atop a monster for a limited time as they hang on and deliver attacks. With the addition of two new weapon classes, challenging new monsters and numerous locales, Monster Hunter 4 Ultimate will be the most robust hunting experience yet. It released in Japan on October 11, 2014 and is scheduled for International release on February 13, 2015.",
+        "_id": "008e5e69-d665-432c-aecd-ef253588357e"
+    },
     "16556940-95f1-43dc-9ad1-34affe32eb54": {
         "title": "MK3 Ultimate",
         "category": "Fighting",

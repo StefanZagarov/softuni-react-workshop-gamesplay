@@ -15,9 +15,9 @@ export default function GamesCatalog() {
             <h1>All Games</h1>
 
             {/* We destructure the game data here to make it easier to use in the GameCatalogItem component */}
-            {games.map(game => <GameCatalogItem key={game._id} {...game} />)}
-
-            {games.length === 0 && <h3 className="no-articles">No articles yet</h3>}
+            {games.length > 0 ?
+                games.map(game => <GameCatalogItem key={game._id} {...game} />)
+                : <h3 className="no-articles">No articles yet</h3>}
 
         </section >
     );
