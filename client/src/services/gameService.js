@@ -19,5 +19,8 @@ export default {
         // Using the abstracted requester module to make a POST request to the server
         // It does not need to be awaiting here since where it is being called, and the request util function is being awaited
         return request.post(baseUrl, gameData);
+    },
+    delete(gameId) {
+        return request.delete(`${baseUrl}/${gameId}`);
     }
 };
