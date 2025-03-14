@@ -20,6 +20,10 @@ export default {
         // It does not need to be awaiting here since where it is being called, and the request util function is being awaited
         return request.post(baseUrl, gameData);
     },
+    edit(gameId, gameData) {
+        // Combine the game data to include the id aswell - if data needs to be transformed, then this should happen in the service (here), not in the react component
+        return request.put(`${baseUrl}/${gameId}`, { ...gameData, _id: gameId });
+    },
     delete(gameId) {
         return request.delete(`${baseUrl}/${gameId}`);
     }
