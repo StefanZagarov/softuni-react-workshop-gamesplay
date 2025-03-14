@@ -3,17 +3,22 @@ import { Link, useNavigate, useParams } from "react-router";
 import gameService from "../../services/gameService";
 import ShowComments from "../show-comments/ShowComments";
 import CreateComment from "../create-comment/CreateComment";
+import commentService from "../../services/commentService";
 
 export default function GameDetails({ email }) {
     const navigate = useNavigate();
     const { gameId } = useParams();
     const [game, setGame] = useState({});
+    const [comments, setComments] = useState([]);
 
     useEffect(() => {
         // Lecturer demonstrates that we can use such thing as Immedietly Invoked Async Arrow Function Expression (IIAAFE)
         (async () => {
             const result = await gameService.getOne(gameId);
             setGame(result);
+
+            const comments = await commentService.getAll(gameId);
+            setComments(comments);
         })();
     }, [gameId]);
 
@@ -25,6 +30,10 @@ export default function GameDetails({ email }) {
         await gameService.delete(gameId);
 
         navigate("/games");
+    }
+
+    function commentCreateHandler(newComment) {
+        setComments(oldComments => [...oldComments, newComment]);
     }
 
     return (
@@ -41,7 +50,7 @@ export default function GameDetails({ email }) {
                     {game.summary}
                 </p>
 
-                <ShowComments />
+                <ShowComments comments={comments} />
 
                 {/* Edit/Delete buttons ( Only for creator of this game ) */}
                 <div className="buttons">
@@ -56,7 +65,11 @@ export default function GameDetails({ email }) {
                     </button>
                 </div>
             </div>;
-            <CreateComment email={email} gameId={gameId} />
+            <CreateComment
+                email={email}
+                gameId={gameId}
+                onCreate={commentCreateHandler}
+            />
         </section >
     );
 }
