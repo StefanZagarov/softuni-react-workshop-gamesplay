@@ -1,14 +1,10 @@
 // Abstracting the request logic to make it reusable for requests
 
-// It takes the metod (GET, POST, etc.), the url and the data as arguments
-async function request(method, url, data) {
-    let options = {};
-
+// It takes the metod (GET, POST, etc.), the url, the data, and optionally options as arguments
+async function request(method, url, data, options = {}) {
     // GET is the default request method, so we need to set method only when it's not GET
     if (method != `GET`) {
-        options = {
-            method
-        };
+        options.method = method;
     }
 
     // If we have data, then we take the above method and then add data to it

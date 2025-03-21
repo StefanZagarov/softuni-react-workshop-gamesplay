@@ -1,12 +1,20 @@
+import { useActionState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useLogin } from "../../api/authApi";
 
 export default function Login({ onLogin }) {
     const navigate = useNavigate();
+    const [_, loginAction, isPending] = useActionState(loginHandler, { email: ``, password: `` });
 
-    function loginAction(formData) {
-        const email = formData.get("email");
+    // Get the login custom hook
+    const login = useLogin();
 
-        onLogin(email);
+    async function loginHandler(_, formData) {
+        const values = Object.fromEntries(formData);
+
+        const authData = await await login(values.email, values.password);
+
+        onLogin(authData);
 
         navigate("/games");
     }
@@ -21,7 +29,7 @@ export default function Login({ onLogin }) {
                     <input type="email" id="email" name="email" placeholder="Sokka@gmail.com" />
                     <label htmlFor="login-pass">Password:</label>
                     <input type="password" id="login-password" name="password" />
-                    <input type="submit" className="btn submit" defaultValue="Login" />
+                    <input type="submit" className="btn submit" defaultValue="Login" disabled={isPending} />
                     <p className="field">
                         <span>
                             If you don't have profile click <Link to="/register">here</Link>

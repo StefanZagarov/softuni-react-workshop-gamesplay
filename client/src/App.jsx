@@ -12,8 +12,8 @@ import { useState } from 'react';
 function App() {
   const [email, setEmail] = useState('');
 
-  function userLoginHandler(email) {
-    setEmail(email);
+  function userLoginHandler(authData) {
+    setEmail(authData.email);
   }
 
   return (
