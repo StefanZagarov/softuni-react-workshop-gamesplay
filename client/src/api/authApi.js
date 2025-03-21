@@ -27,3 +27,23 @@ export function useLogin() {
 
     return login;
 }
+
+export function useRegister() {
+    // Abort controller for avoiding duplicate requests
+    const abortRef = useRef(new AbortController());
+
+    async function register(email, password) {
+        return await requester.post(
+            `${baseUrl}/register`,
+            { email, password },
+            { signal: abortRef.current.signal });
+    }
+
+    // Trigger the abort on duplicate requests
+    useEffect(() => {
+        const abortController = abortRef.current;
+        return () => abortController.abort();
+    }, []);
+
+    return register;
+}

@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import gameService from "../../services/gameService";
 import ShowComments from "../show-comments/ShowComments";
 import CreateComment from "../create-comment/CreateComment";
 import commentService from "../../services/commentService";
+import { UserContext } from "../../contexts/UserContext";
 
-export default function GameDetails({ email }) {
+export default function GameDetails() {
     const navigate = useNavigate();
     const { gameId } = useParams();
     const [game, setGame] = useState({});
     const [comments, setComments] = useState([]);
+
+    const { email } = useContext(UserContext);
 
     useEffect(() => {
         // Lecturer demonstrates that we can use such thing as Immedietly Invoked Async Arrow Function Expression (IIAAFE)

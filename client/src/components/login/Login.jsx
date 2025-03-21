@@ -1,10 +1,13 @@
-import { useActionState } from "react";
+import { useActionState, useContext } from "react";
 import { Link, useNavigate } from "react-router";
 import { useLogin } from "../../api/authApi";
+import { UserContext } from "../../contexts/UserContext";
 
-export default function Login({ onLogin }) {
+export default function Login() {
     const navigate = useNavigate();
     const [_, loginAction, isPending] = useActionState(loginHandler, { email: ``, password: `` });
+
+    const { userLoginHandler } = useContext(UserContext);
 
     // Get the login custom hook
     const login = useLogin();
@@ -12,9 +15,9 @@ export default function Login({ onLogin }) {
     async function loginHandler(_, formData) {
         const values = Object.fromEntries(formData);
 
-        const authData = await await login(values.email, values.password);
+        const authData = await login(values.email, values.password);
 
-        onLogin(authData);
+        userLoginHandler(authData);
 
         navigate("/games");
     }
