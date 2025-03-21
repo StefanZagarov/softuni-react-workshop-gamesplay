@@ -14,7 +14,9 @@ async function request(method, url, data, options = {}) {
             ...options,
             // Add the data
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                // After adding the above to the headers, we add the headers from the options
+                ...options.headers
             },
             body: JSON.stringify(data)
         };
@@ -22,6 +24,12 @@ async function request(method, url, data, options = {}) {
 
     try {
         const response = await fetch(url, options);
+        // We try to get the content type of the header
+        const responseContentType = response.headers.get('Content-Type');
+        // If the response does not have a content type (in the case of a logout), then we return
+        if (!responseContentType) {
+            return;
+        }
 
         const result = await response.json();
 

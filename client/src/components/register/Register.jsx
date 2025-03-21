@@ -1,10 +1,9 @@
 import { useActionState, useContext } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { useRegister } from "../../api/authApi";
 import { UserContext } from "../../contexts/UserContext";
 
 export default function Register() {
-    const navigate = useNavigate();
     // Register custom hook
     const register = useRegister();
     // Get the login handler to automatically login after registration
@@ -27,7 +26,7 @@ export default function Register() {
         userLoginHandler(authData);
     }
 
-    const [value, registerAction, isPending] = useActionState(registerHandler, { email: ``, password: ``, confirmPassword: `` });
+    const [_, registerAction, isPending] = useActionState(registerHandler, { email: ``, password: ``, confirmPassword: `` });
 
     return (
         < section id="register-page" className="content auth" >

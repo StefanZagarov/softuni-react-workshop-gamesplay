@@ -1,7 +1,8 @@
 // Custom hook to handle login
 
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import requester from "../utils/requester";
+import { UserContext } from "../contexts/UserContext";
 
 const baseUrl = 'http://localhost:3030/users';
 
@@ -46,4 +47,42 @@ export function useRegister() {
     }, []);
 
     return register;
+}
+
+export function useLogout() {
+    // Abort controller for avoiding duplicate requests
+    const abortRef = useRef(new AbortController());
+
+    const { accessToken, userLogoutHandler } = useContext(UserContext);
+
+    // Using useEffect to send the logout request and invalidate the session immedietly on logout click
+    useEffect(() => {
+        // Stop infinite loop
+        if (!accessToken) {
+            return;
+        }
+
+        const options = {
+            headers: {
+                'X-Authorization': accessToken,
+            }
+        };
+
+        // Send null as the second argument because we don't need to send any data, the options contain the needed "X-Authorization" header
+        requester.get(`${baseUrl}/logout`, null, options)
+            // Remove the data from the context
+            .then(userLogoutHandler);
+
+    }, [accessToken, userLogoutHandler]);
+
+    // Trigger the abort on duplicate requests
+    useEffect(() => {
+        const abortController = abortRef.current;
+        return () => abortController.abort();
+    }, []);
+
+    // Returns a boolean, depends on the accessToken, if it's null, then returns true, else false
+    return {
+        isLoggedOut: !!accessToken,
+    };
 }
