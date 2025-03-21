@@ -11,12 +11,10 @@ export function useLogin() {
     const abortRef = useRef(new AbortController());
 
     async function login(email, password) {
-        const result = await requester.post(
+        return await requester.post(
             `${baseUrl}/login`,
             { email, password },
             { signal: abortRef.current.signal });
-
-        return result;
     }
 
     // Call the abort controller
