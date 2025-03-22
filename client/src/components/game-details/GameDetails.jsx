@@ -1,19 +1,20 @@
-import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import ShowComments from "../show-comments/ShowComments";
 import CreateComment from "../create-comment/CreateComment";
-import { UserContext } from "../../contexts/UserContext";
 import { useDeleteGame, useGetOneGame } from "../../api/gameApi";
 import useAuth from "../../hooks/useAuth";
+import { useComments } from "../../api/commentsApi";
 
 export default function GameDetails() {
     const navigate = useNavigate();
     const { gameId } = useParams();
-    const [comments, setComments] = useState([]);
-    // Getting the email from the authData from the useAuth hook
-    const { email } = useAuth();
+    // Getting the email and the ID of the creator from the authData from the useAuth hook
+    const { email, _id: userId } = useAuth();
     const game = useGetOneGame(gameId);
     const deleteGame = useDeleteGame();
+    const comments = useComments(gameId);
+
+    const isOwner = userId === game._ownerId;
 
     async function onDelete() {
         const hasConfirm = confirm(`Are you sure you want to delete ${game.title}?`);
@@ -44,20 +45,21 @@ export default function GameDetails() {
                 </p>
 
                 <ShowComments comments={comments} />
-
                 {/* Edit/Delete buttons ( Only for creator of this game ) */}
-                <div className="buttons">
-                    <Link to={`/games/${gameId}/edit`} className="button">
-                        Edit
-                    </Link>
-                    <button
-                        onClick={onDelete}
-                        className="button"
-                    >
-                        Delete
-                    </button>
-                </div>
-            </div>;
+                {isOwner &&
+                    <div className="buttons">
+                        <Link to={`/games/${gameId}/edit`} className="button">
+                            Edit
+                        </Link>
+                        <button
+                            onClick={onDelete}
+                            className="button"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                }
+            </div>
             <CreateComment
                 email={email}
                 gameId={gameId}

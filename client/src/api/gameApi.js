@@ -23,6 +23,8 @@ export function useGetAllGames() {
 
     const [games, setGame] = useState([]);
 
+    // We use useEffect because we need it to happen once on page load
+    // Hooks are like extensions to functional components, so when a component that has this hook is rendered, the hook is executed
     useEffect(() => {
         request.get(baseUrl).then(setGame);
     }, []);
@@ -33,11 +35,14 @@ export function useGetAllGames() {
 export function useGetLatestGames() {
     const [latestGames, setLatestGames] = useState([]);
 
+    // We use useEffect because we need it to happen once on page load
+    // Hooks are like extensions to functional components, so when a component that has this hook is rendered, the hook is executed
     // Search by parameters
     useEffect(() => {
         const searchParams = new URLSearchParams({
             sortBy: '_createdOn desc',
             pageSize: 3,
+            // Return only those properties
             select: '_id,imageUrl,title',
         });
 
@@ -51,6 +56,8 @@ export function useGetLatestGames() {
 export function useGetOneGame(gameId) {
     const [game, setGame] = useState({});
 
+    // We use useEffect because we need it to happen once on page load
+    // Hooks are like extensions to functional components, so when a component that has this hook is rendered, the hook is executed
     useEffect(() => {
         request.get(`${baseUrl}/${gameId}`).then(setGame);
     }, [gameId]);

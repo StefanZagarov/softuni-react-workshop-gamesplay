@@ -14,6 +14,7 @@ export default function useAuth() {
             }
         };
 
+        // If we have authToken, return authOpetions, otherwise return options - this is to stop sending undefined authToken when we don't have one
         return request.baseRequest(method, url, data, authData.accessToken ? authOptions : options);
     };
 
