@@ -94,7 +94,7 @@
             // NOTE: the OPTIONS method results in undefined result and also it never processes plugins - keep this in mind
             if (method == 'OPTIONS') {
                 Object.assign(headers, {
-                    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+                    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
                     'Access-Control-Allow-Credentials': false,
                     'Access-Control-Max-Age': '86400',
                     'Access-Control-Allow-Headers': 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, X-Authorization, X-Admin'
@@ -177,8 +177,15 @@
             .split('&')
             .filter(s => s != '')
             .map(x => x.split('='))
-            .reduce((p, [k, v]) => Object.assign(p, { [k]: decodeURIComponent(v) }), {});
-        const body = await parseBody(req);
+            .reduce((p, [k, v]) => Object.assign(p, { [k]: decodeURIComponent(v.replace(/\+/g, " ")) }), {});
+
+        let body;
+        // If req stream has ended body has been parsed
+        if (req.readableEnded) {
+            body = req.body;
+        } else {
+            body = await parseBody(req);
+        }
 
         return {
             serviceName,
@@ -750,7 +757,7 @@
         };
     };
 
-    var require$$0 = "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    <title>SUPS Admin Panel</title>\r\n    <style>\r\n        * {\r\n            padding: 0;\r\n            margin: 0;\r\n        }\r\n\r\n        body {\r\n            padding: 32px;\r\n            font-size: 16px;\r\n        }\r\n\r\n        .layout::after {\r\n            content: '';\r\n            clear: both;\r\n            display: table;\r\n        }\r\n\r\n        .col {\r\n            display: block;\r\n            float: left;\r\n        }\r\n\r\n        p {\r\n            padding: 8px 16px;\r\n        }\r\n\r\n        table {\r\n            border-collapse: collapse;\r\n        }\r\n\r\n        caption {\r\n            font-size: 120%;\r\n            text-align: left;\r\n            padding: 4px 8px;\r\n            font-weight: bold;\r\n            background-color: #ddd;\r\n        }\r\n\r\n        table, tr, th, td {\r\n            border: 1px solid #ddd;\r\n        }\r\n\r\n        th, td {\r\n            padding: 4px 8px;\r\n        }\r\n\r\n        ul {\r\n            list-style: none;\r\n        }\r\n\r\n        .collection-list a {\r\n            display: block;\r\n            width: 120px;\r\n            padding: 4px 8px;\r\n            text-decoration: none;\r\n            color: black;\r\n            background-color: #ccc;\r\n        }\r\n        .collection-list a:hover {\r\n            background-color: #ddd;\r\n        }\r\n        .collection-list a:visited {\r\n            color: black;\r\n        }\r\n    </style>\r\n    <script type=\"module\">\nimport { html, render } from 'https://unpkg.com/lit-html?module';\nimport { until } from 'https://unpkg.com/lit-html/directives/until?module';\n\nconst api = {\r\n    async get(url) {\r\n        return json(url);\r\n    },\r\n    async post(url, body) {\r\n        return json(url, {\r\n            method: 'POST',\r\n            headers: { 'Content-Type': 'application/json' },\r\n            body: JSON.stringify(body)\r\n        });\r\n    }\r\n};\r\n\r\nasync function json(url, options) {\r\n    return await (await fetch('/' + url, options)).json();\r\n}\r\n\r\nasync function getCollections() {\r\n    return api.get('data');\r\n}\r\n\r\nasync function getRecords(collection) {\r\n    return api.get('data/' + collection);\r\n}\r\n\r\nasync function getThrottling() {\r\n    return api.get('util/throttle');\r\n}\r\n\r\nasync function setThrottling(throttle) {\r\n    return api.post('util', { throttle });\r\n}\n\nasync function collectionList(onSelect) {\r\n    const collections = await getCollections();\r\n\r\n    return html`\r\n    <ul class=\"collection-list\">\r\n        ${collections.map(collectionLi)}\r\n    </ul>`;\r\n\r\n    function collectionLi(name) {\r\n        return html`<li><a href=\"javascript:void(0)\" @click=${(ev) => onSelect(ev, name)}>${name}</a></li>`;\r\n    }\r\n}\n\nasync function recordTable(collectionName) {\r\n    const records = await getRecords(collectionName);\r\n    const layout = getLayout(records);\r\n\r\n    return html`\r\n    <table>\r\n        <caption>${collectionName}</caption>\r\n        <thead>\r\n            <tr>${layout.map(f => html`<th>${f}</th>`)}</tr>\r\n        </thead>\r\n        <tbody>\r\n            ${records.map(r => recordRow(r, layout))}\r\n        </tbody>\r\n    </table>`;\r\n}\r\n\r\nfunction getLayout(records) {\r\n    const result = new Set(['_id']);\r\n    records.forEach(r => Object.keys(r).forEach(k => result.add(k)));\r\n\r\n    return [...result.keys()];\r\n}\r\n\r\nfunction recordRow(record, layout) {\r\n    return html`\r\n    <tr>\r\n        ${layout.map(f => html`<td>${JSON.stringify(record[f]) || html`<span>(missing)</span>`}</td>`)}\r\n    </tr>`;\r\n}\n\nasync function throttlePanel(display) {\r\n    const active = await getThrottling();\r\n\r\n    return html`\r\n    <p>\r\n        Request throttling: </span>${active}</span>\r\n        <button @click=${(ev) => set(ev, true)}>Enable</button>\r\n        <button @click=${(ev) => set(ev, false)}>Disable</button>\r\n    </p>`;\r\n\r\n    async function set(ev, state) {\r\n        ev.target.disabled = true;\r\n        await setThrottling(state);\r\n        display();\r\n    }\r\n}\n\n//import page from '//unpkg.com/page/page.mjs';\r\n\r\n\r\nfunction start() {\r\n    const main = document.querySelector('main');\r\n    editor(main);\r\n}\r\n\r\nasync function editor(main) {\r\n    let list = html`<div class=\"col\">Loading&hellip;</div>`;\r\n    let viewer = html`<div class=\"col\">\r\n    <p>Select collection to view records</p>\r\n</div>`;\r\n    display();\r\n\r\n    list = html`<div class=\"col\">${await collectionList(onSelect)}</div>`;\r\n    display();\r\n\r\n    async function display() {\r\n        render(html`\r\n        <section class=\"layout\">\r\n            ${until(throttlePanel(display), html`<p>Loading</p>`)}\r\n        </section>\r\n        <section class=\"layout\">\r\n            ${list}\r\n            ${viewer}\r\n        </section>`, main);\r\n    }\r\n\r\n    async function onSelect(ev, name) {\r\n        ev.preventDefault();\r\n        viewer = html`<div class=\"col\">${await recordTable(name)}</div>`;\r\n        display();\r\n    }\r\n}\r\n\r\nstart();\n\n</script>\r\n</head>\r\n<body>\r\n    <main>\r\n        Loading&hellip;\r\n    </main>\r\n</body>\r\n</html>";
+    var require$$0 = "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    <title>SUPS Admin Panel</title>\r\n    <style>\r\n        * {\r\n            padding: 0;\r\n            margin: 0;\r\n        }\r\n\r\n        body {\r\n            padding: 32px;\r\n            font-size: 16px;\r\n        }\r\n\r\n        .layout::after {\r\n            content: '';\r\n            clear: both;\r\n            display: table;\r\n        }\r\n\r\n        .col {\r\n            display: block;\r\n            float: left;\r\n        }\r\n\r\n        p {\r\n            padding: 8px 16px;\r\n        }\r\n\r\n        table {\r\n            border-collapse: collapse;\r\n        }\r\n\r\n        caption {\r\n            font-size: 120%;\r\n            text-align: left;\r\n            padding: 4px 8px;\r\n            font-weight: bold;\r\n            background-color: #ddd;\r\n        }\r\n\r\n        table, tr, th, td {\r\n            border: 1px solid #ddd;\r\n        }\r\n\r\n        th, td {\r\n            padding: 4px 8px;\r\n        }\r\n\r\n        ul {\r\n            list-style: none;\r\n        }\r\n\r\n        .collection-list a {\r\n            display: block;\r\n            width: 120px;\r\n            padding: 4px 8px;\r\n            text-decoration: none;\r\n            color: black;\r\n            background-color: #ccc;\r\n        }\r\n        .collection-list a:hover {\r\n            background-color: #ddd;\r\n        }\r\n        .collection-list a:visited {\r\n            color: black;\r\n        }\r\n    </style>\r\n    <script type=\"module\">\nimport { html, render } from 'https://unpkg.com/lit-html@1.3.0?module';\nimport { until } from 'https://unpkg.com/lit-html@1.3.0/directives/until?module';\n\nconst api = {\r\n    async get(url) {\r\n        return json(url);\r\n    },\r\n    async post(url, body) {\r\n        return json(url, {\r\n            method: 'POST',\r\n            headers: { 'Content-Type': 'application/json' },\r\n            body: JSON.stringify(body)\r\n        });\r\n    }\r\n};\r\n\r\nasync function json(url, options) {\r\n    return await (await fetch('/' + url, options)).json();\r\n}\r\n\r\nasync function getCollections() {\r\n    return api.get('data');\r\n}\r\n\r\nasync function getRecords(collection) {\r\n    return api.get('data/' + collection);\r\n}\r\n\r\nasync function getThrottling() {\r\n    return api.get('util/throttle');\r\n}\r\n\r\nasync function setThrottling(throttle) {\r\n    return api.post('util', { throttle });\r\n}\n\nasync function collectionList(onSelect) {\r\n    const collections = await getCollections();\r\n\r\n    return html`\r\n    <ul class=\"collection-list\">\r\n        ${collections.map(collectionLi)}\r\n    </ul>`;\r\n\r\n    function collectionLi(name) {\r\n        return html`<li><a href=\"javascript:void(0)\" @click=${(ev) => onSelect(ev, name)}>${name}</a></li>`;\r\n    }\r\n}\n\nasync function recordTable(collectionName) {\r\n    const records = await getRecords(collectionName);\r\n    const layout = getLayout(records);\r\n\r\n    return html`\r\n    <table>\r\n        <caption>${collectionName}</caption>\r\n        <thead>\r\n            <tr>${layout.map(f => html`<th>${f}</th>`)}</tr>\r\n        </thead>\r\n        <tbody>\r\n            ${records.map(r => recordRow(r, layout))}\r\n        </tbody>\r\n    </table>`;\r\n}\r\n\r\nfunction getLayout(records) {\r\n    const result = new Set(['_id']);\r\n    records.forEach(r => Object.keys(r).forEach(k => result.add(k)));\r\n\r\n    return [...result.keys()];\r\n}\r\n\r\nfunction recordRow(record, layout) {\r\n    return html`\r\n    <tr>\r\n        ${layout.map(f => html`<td>${JSON.stringify(record[f]) || html`<span>(missing)</span>`}</td>`)}\r\n    </tr>`;\r\n}\n\nasync function throttlePanel(display) {\r\n    const active = await getThrottling();\r\n\r\n    return html`\r\n    <p>\r\n        Request throttling: </span>${active}</span>\r\n        <button @click=${(ev) => set(ev, true)}>Enable</button>\r\n        <button @click=${(ev) => set(ev, false)}>Disable</button>\r\n    </p>`;\r\n\r\n    async function set(ev, state) {\r\n        ev.target.disabled = true;\r\n        await setThrottling(state);\r\n        display();\r\n    }\r\n}\n\n//import page from '//unpkg.com/page/page.mjs';\r\n\r\n\r\nfunction start() {\r\n    const main = document.querySelector('main');\r\n    editor(main);\r\n}\r\n\r\nasync function editor(main) {\r\n    let list = html`<div class=\"col\">Loading&hellip;</div>`;\r\n    let viewer = html`<div class=\"col\">\r\n    <p>Select collection to view records</p>\r\n</div>`;\r\n    display();\r\n\r\n    list = html`<div class=\"col\">${await collectionList(onSelect)}</div>`;\r\n    display();\r\n\r\n    async function display() {\r\n        render(html`\r\n        <section class=\"layout\">\r\n            ${until(throttlePanel(display), html`<p>Loading</p>`)}\r\n        </section>\r\n        <section class=\"layout\">\r\n            ${list}\r\n            ${viewer}\r\n        </section>`, main);\r\n    }\r\n\r\n    async function onSelect(ev, name) {\r\n        ev.preventDefault();\r\n        viewer = html`<div class=\"col\">${await recordTable(name)}</div>`;\r\n        display();\r\n    }\r\n}\r\n\r\nstart();\n\n</script>\r\n</head>\r\n<body>\r\n    <main>\r\n        Loading&hellip;\r\n    </main>\r\n</body>\r\n</html>";
 
     const mode = process.argv[2] == '-dev' ? 'dev' : 'prod';
 
@@ -1322,11 +1329,18 @@
         users: {
             "35c62d76-8152-4626-8712-eeb96381bea8": {
                 email: "peter@abv.bg",
+                username: "Peter",
                 hashedPassword: "83313014ed3e2391aa1332615d2f053cf5c1bfe05ca1cbcb5582443822df6eb1"
             },
             "847ec027-f659-4086-8032-5173e2f9c93a": {
-                email: "john@abv.bg",
+                email: "george@abv.bg",
+                username: "George",
                 hashedPassword: "83313014ed3e2391aa1332615d2f053cf5c1bfe05ca1cbcb5582443822df6eb1"
+            },
+            "60f0cf0b-34b0-4abd-9769-8c42f830dffc": {
+                email: "admin@abv.bg",
+                username: "Admin",
+                hashedPassword: "fac7060c3e17e6f151f247eacb2cd5ae80b8c36aedb8764e18a41bbdc16aa302"
             }
         },
         sessions: {
@@ -1334,36 +1348,67 @@
     };
     var seedData = {
         games: {
-            "ff436770-76c5-40e2-b231-77409eda7a61": {
-                "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
-                "title": "CoverFire",
-                "category": "Action",
-                "maxLevel": "70",
-                "imageUrl": "/images/CoverFire.png",
-                "summary": "Best action shooter game, easy controls, realistic 3D graphics and fun offline missions. Get your best shooting gun and take to action!",
-                "_createdOn": 1617194128618,
+            "3c651ac4-6c21-4f60-b6c2-f7f3337a75c0": {
+                "_ownerId": "60f0cf0b-34b0-4abd-9769-8c42f830dffc",
+                "title": "Monster Hunter Freedom Unite",
+                "category": "Action, RPG",
+                "maxLevel": "12",
+                "imageUrl": "https://m.media-amazon.com/images/M/MV5BYjcxYTY0MWItMTg2MC00NThiLTlhODAtOWJkMjUzNTk3ZWIzXkEyXkFqcGc@._V1_QL75_UX190_CR0,2,190,281_.jpg",
+                "summary": "Monster Hunter Freedom Unite is the western release of Monster Hunter Portable 2nd G. It was released across America on June 22, 2009, Australia on the 25th of June, and Europe on the 26th of June. With over 500 hours of gameplay and previously unreleased monsters, weapons and missions, Monster Hunter Freedom Unite was the biggest game of the series for its time. Via Ad-Hoc functionality, players can experience the social gaming phenomenon that’s gripping Japan and adventure with up to four friends for a thrilling and savaging multiplayer hunting party. From devising the strategy to executing the attack, team play with your friends is the key to hunting down the ferocious beasts.",
+                "_createdOn": 1742658250595,
+                "_id": "3c651ac4-6c21-4f60-b6c2-f7f3337a75c0"
             },
-            "1840a313-225c-416a-817a-9954d4609f7c": {
-                "_ownerId": "35c62d76-8152-4626-8712-eeb96381bea8",
-                "title": "MineCraft",
-                "category": "Arcade",
-                "maxLevel": "250",
-                "imageUrl": "/images/MineCraft.png",
-                "summary": "Set in a world where fantasy creatures live side by side with humans. A human cop is forced to work with an Orc to find a weapon everyone is prepared to kill for. Set in a world where fantasy creatures live side by side with humans. A human cop is forced to work with an Orc to find a weapon everyone is prepared to kill for.",
-                "_createdOn": 1617194210928,
+            "60f0cf0b-34b0-4abd-9769-8c42f830dffc": {
+                "title": "Monster Hunter Wilds",
+                "category": "Action, RPG, Storytelling",
+                "maxLevel": "9",
+                "imageUrl": "https://monsterhunterwiki.org/images/f/fa/MHWilds-Box_Art.jpg",
+                "summary": "Monster Hunter Wilds is a 2025 action role-playing game developed and published by Capcom. A successor to Monster Hunter: World (2018), the game released worldwide for Windows, PlayStation 5 and Xbox Series X and Series S, with support for cross-platform play, on February 28, 2025. As with other Monster Hunter games, Wilds has the player control a Hunter that is part of a guild assigned to explore the Forbidden Lands, a nearly uninhabitable area with multiple biomes and dangerous storms. During their exploration, the Hunter must fight large monsters that threaten their group, either by killing or capturing them. The Hunter then can collect resources from their victories, as well as from gathering in the field, to synthesize new weapons and armor with better attributes that allows the Hunter to fight stronger monsters. The player has an option of using fourteen different weapon types in combat, each with different combat maneuvers. New to Wilds is the ability to carry up to two weapons into the field using their mounted bird-like Seikrets to swap gear, the ability to set up pop-up camps within the game's open world to create a more seamless hunting experience, and a wound system that allows the player to target weak points on a monster to inflict more damage. Within three days of release, Wilds sold more than 8 million copies, making it Capcom's fastest-selling game to date.",
+                "_id": "b4b86efd-5224-4c35-a443-f7a08b2439ab",
+                "_createdOn": 1742658474876,
+                "_updatedOn": 1742658517992,
+                "_ownerId": "60f0cf0b-34b0-4abd-9769-8c42f830dffc"
             },
-            "126777f5-3277-42ad-b874-76d043b069cb": {
-                "_ownerId": "847ec027-f659-4086-8032-5173e2f9c93a",
-                "title": "Zombie Lang",
-                "category": "Vertical Shooter",
+            "7145f2a8-b6e6-4f82-a07c-b83b922f204e": {
+                "_ownerId": "60f0cf0b-34b0-4abd-9769-8c42f830dffc",
+                "title": "Monster Hunter: World",
+                "category": "Action, RPG, Online",
+                "maxLevel": "13",
+                "imageUrl": "https://image.api.playstation.com/cdn/HP0102/CUSA09554_00/l9eJJZczCIIcT1otva8c0EvKhlVyPy0zVLdhVZ5RJzO7NGZrRvoDOhIEFU1sJwtM.png",
+                "summary": "Monster Hunter: World is a 2018 action role-playing game developed and published by Capcom. The fifth mainline installment in the Monster Hunter series, it was released worldwide for PlayStation 4 and Xbox One in January 2018, with a Windows version following in August 2018. In the game, the player takes the role of a Hunter, tasked to hunt down and either kill or trap monsters that roam in one of several environmental spaces. If successful, the player is rewarded through loot consisting of parts from the monster and other elements that are used to craft weapons and armor, amongst other equipment. The game's core loop has the player crafting appropriate gear to be able to hunt down more difficult monsters, which in turn provide parts that lead to more powerful gear. Players may hunt alone or in a group of up to four players via the game's online multiplayer.",
+                "_createdOn": 1742658552767,
+                "_id": "7145f2a8-b6e6-4f82-a07c-b83b922f204e"
+            },
+            "0c1112a6-9828-47b0-bfed-b4058245adc8": {
+                "_ownerId": "60f0cf0b-34b0-4abd-9769-8c42f830dffc",
+                "title": "Monster Hunter 4 Ultimate",
+                "category": "Action, RPG",
+                "maxLevel": "16",
+                "imageUrl": "https://assets-prd.ignimgs.com/2022/02/07/monsterhunter4ultimate-sq-1644270519616.jpg",
+                "summary": "Monster Hunter 4 Ultimate will take players to new heights, literally, with the introduction of more vertical and lateral movement than ever. An expanded repertoire of actions will create more dynamic hunting experiences with fluid climbing motions and the ability to jump attack from walls or ledges. In addition, players will be able to ride atop a monster for a limited time as they hang on and deliver attacks. With the addition of two new weapon classes, challenging new monsters and numerous locales, Monster Hunter 4 Ultimate will be the most robust hunting experience yet. It released in Japan on October 11, 2014 and is scheduled for International release on February 13, 2015.",
+                "_createdOn": 1742658582216,
+                "_id": "0c1112a6-9828-47b0-bfed-b4058245adc8"
+            },
+            "d79598b8-c3b0-4e59-926b-76194380054b": {
+                "_ownerId": "60f0cf0b-34b0-4abd-9769-8c42f830dffc",
+                "title": "Monster Hunter 3 Ultimate",
+                "category": "Action, RPG",
+                "maxLevel": "15",
+                "imageUrl": "https://assets-prd.ignimgs.com/2021/12/14/monsterhunter3ultimate-1639515649829.jpg",
+                "summary": "Monster Hunter 3 Ultimate (モンスターハンター3アルティメート) is an expansion of the Wii title Monster Hunter 3 (Tri), released on the Nintendo 3DS alongside a Wii U version that supports 480p, 720p, 1080i and 1080p resolution graphical output. The game was confirmed to arrive by Capcom's Dubindoh from Capcom-Unity. Monster Hunter 3 Ultimate was released in North America and Europe during March 2013.",
+                "_createdOn": 1742658776495,
+                "_id": "d79598b8-c3b0-4e59-926b-76194380054b"
+            },
+            "3ae63dcd-26a0-48b6-8e41-368c75a95c93": {
+                "_ownerId": "60f0cf0b-34b0-4abd-9769-8c42f830dffc",
+                "title": " Monster Hunter Generations Ultimate",
+                "category": "Action, RPG",
                 "maxLevel": "100",
-                "imageUrl": "/images/ZombieLang.png",
-                "summary": "With it’s own unique story, set between the events of the first movie, Zombieland: Double Tap- Road Trip is a ridiculously fun top-down twin-stick shooter featuring local co-op multiplayer for up to four players. Play as your favorite heroes from the original — Tallahassee, Columbus, Wichita and Little Rock — as well as new unlockable characters from the upcoming sequel.  The game embraces the game-like elements seen in the film by  incorporating everything from the “Rules” to “Zombie Kill of the Week”.  Use your special abilities, an arsenal of weapons and the essential Zombieland rules for survival to stay alive against huge numbers of uniquely grotesque and dangerous undead monstrosities in Zombieland: Double Tap- Road Trip’s story-based campaign mode, wave-based horde mode, and boss battles.",
-                "_createdOn": 1617194295474,
+                "imageUrl": "https://assets.nintendo.com/image/upload/c_fill,w_1200/q_auto:best/f_auto/dpr_2.0/ncom/software/switch/70010000004642/f4d5e5f0a8adb2a663d2763f2244e6ce5c5978034b992a15c16262391725f064",
+                "summary": "Monster Hunter Generations Ultimate, known in Japan as Monster Hunter XX (モンスターハンターダブルクロス), is an action-role-playing game in the Monster Hunter series developed and published by Capcom. The game serves as an expanded edition of Monster Hunter Generations. Generations Ultimate adds two new flagship monsters, Bloodbath Diablos and Valstrax, alongside the four flagship monsters from the previous game. New additions also include two new Hunter Styles, Valor Style and Alchemy Style. The Switch release of the game serves as a HD version. ",
+                "_createdOn": 1742658885871,
+                "_id": "3ae63dcd-26a0-48b6-8e41-368c75a95c93"
             }
-        },
-        comments: {
-        
         }
     };
     var rules$1 = {
@@ -1374,6 +1419,18 @@
             ],
             ".update": false,
             ".delete": false
+        },
+        members: {
+            ".update": "isOwner(user, get('teams', data.teamId))",
+            ".delete": "isOwner(user, get('teams', data.teamId)) || isOwner(user, data)",
+            "*": {
+                teamId: {
+                    ".update": "newData.teamId = data.teamId"
+                },
+                status: {
+                    ".create": "newData.status = 'pending'"
+                }
+            }
         }
     };
     var settings = {
@@ -1393,13 +1450,13 @@
     const server = http__default['default'].createServer(requestHandler(plugins, services));
 
     const port = 3030;
+
     server.listen(port);
+
     console.log(`Server started on port ${port}. You can make requests to http://localhost:${port}/`);
     console.log(`Admin panel located at http://localhost:${port}/admin`);
 
-    var softuniPracticeServer = {
-
-    };
+    var softuniPracticeServer = server;
 
     return softuniPracticeServer;
 

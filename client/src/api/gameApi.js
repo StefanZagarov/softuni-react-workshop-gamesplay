@@ -30,6 +30,24 @@ export function useGetAllGames() {
     return games;
 }
 
+export function useGetLatestGames() {
+    const [latestGames, setLatestGames] = useState([]);
+
+    // Search by parameters
+    useEffect(() => {
+        const searchParams = new URLSearchParams({
+            sortBy: '_createdOn desc',
+            pageSize: 3,
+            select: '_id,imageUrl,title',
+        });
+
+        request.get(`${baseUrl}?${searchParams.toString()}`)
+            .then(setLatestGames);
+    }, []);
+
+    return latestGames;
+}
+
 export function useGetOneGame(gameId) {
     const [game, setGame] = useState({});
 
