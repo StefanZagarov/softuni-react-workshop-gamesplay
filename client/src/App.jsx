@@ -12,7 +12,7 @@ import Logout from './components/logout/Logout';
 import usePersistedState from './hooks/usePersistedState';
 
 function App() {
-  const [authData, setAuthData] = usePersistedState('');
+  const [authData, setAuthData] = usePersistedState(`auth`, '');
 
   function userLoginHandler(resultData) {
     setAuthData(resultData);
