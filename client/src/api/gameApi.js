@@ -55,3 +55,13 @@ export function useGetAllGames() {
 
     return games;
 }
+
+export function useGetOneGame(gameId) {
+    const [game, setGame] = useState({});
+
+    useEffect(() => {
+        request.get(`${baseUrl}/${gameId}`).then(setGame);
+    }, [gameId]);
+
+    return game;
+}

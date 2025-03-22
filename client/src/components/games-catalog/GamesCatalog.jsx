@@ -2,7 +2,6 @@ import GameCatalogItem from "./game-catalog-item/GameCatalogItem";
 import { useGetAllGames } from "../../api/gameApi";
 
 export default function GamesCatalog() {
-
     const games = useGetAllGames();
 
     return (

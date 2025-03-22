@@ -5,25 +5,16 @@ import ShowComments from "../show-comments/ShowComments";
 import CreateComment from "../create-comment/CreateComment";
 import commentService from "../../services/commentService";
 import { UserContext } from "../../contexts/UserContext";
+import { useGetOneGame } from "../../api/gameApi";
 
 export default function GameDetails() {
     const navigate = useNavigate();
     const { gameId } = useParams();
-    const [game, setGame] = useState({});
     const [comments, setComments] = useState([]);
 
     const { email } = useContext(UserContext);
 
-    useEffect(() => {
-        // Lecturer demonstrates that we can use such thing as Immedietly Invoked Async Arrow Function Expression (IIAAFE)
-        (async () => {
-            const result = await gameService.getOne(gameId);
-            setGame(result);
-
-            const comments = await commentService.getAll(gameId);
-            setComments(comments);
-        })();
-    }, [gameId]);
+    const game = useGetOneGame(gameId);
 
     async function onDelete() {
         const hasConfirm = confirm(`Are you sure you want to delete ${game.title}?`);
