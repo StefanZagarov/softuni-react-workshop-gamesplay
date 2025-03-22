@@ -12,10 +12,18 @@ export default function Login() {
     // Get the login custom hook
     const login = useLogin();
 
+
     async function loginHandler(_, formData) {
+
         const values = Object.fromEntries(formData);
 
         const authData = await login(values.email, values.password);
+
+        // Simple valid user check
+        if (authData?.code === 403) {
+            console.log(`Invalid credentials`);
+            return;
+        }
 
         userLoginHandler(authData);
 
