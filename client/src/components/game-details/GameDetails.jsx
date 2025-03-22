@@ -1,27 +1,26 @@
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
-import gameService from "../../services/gameService";
 import ShowComments from "../show-comments/ShowComments";
 import CreateComment from "../create-comment/CreateComment";
-import commentService from "../../services/commentService";
 import { UserContext } from "../../contexts/UserContext";
-import { useGetOneGame } from "../../api/gameApi";
+import { useDeleteGame, useGetOneGame } from "../../api/gameApi";
+import useAuth from "../../hooks/useAuth";
 
 export default function GameDetails() {
     const navigate = useNavigate();
     const { gameId } = useParams();
     const [comments, setComments] = useState([]);
-
-    const { email } = useContext(UserContext);
-
+    // Getting the email from the authData from the useAuth hook
+    const { email } = useAuth();
     const game = useGetOneGame(gameId);
+    const deleteGame = useDeleteGame();
 
     async function onDelete() {
         const hasConfirm = confirm(`Are you sure you want to delete ${game.title}?`);
 
         if (!hasConfirm) return;
 
-        await gameService.delete(gameId);
+        await deleteGame(gameId);
 
         navigate("/games");
     }
