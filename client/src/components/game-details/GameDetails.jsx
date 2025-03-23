@@ -17,7 +17,7 @@ export default function GameDetails() {
     const create = useCreateComment();
     const { comments, addComment } = useComments(gameId);
     const [optimisticComments, setOptimisticComments] = useOptimistic(comments, (state, newComment) => [...state, newComment]);
-    console.log(comments);
+
     const isOwner = userId === game._ownerId;
 
     async function onDelete() {
@@ -30,7 +30,10 @@ export default function GameDetails() {
         navigate("/games");
     }
 
-    async function commentCreateHandler(comment) {
+    async function commentCreateHandler(formData) {
+        // Get the comment from the formData - it needs to be directly from the form action
+        const comment = formData.get('comment');
+
         // Optimistic update
         // 1. Create an optimistic comment
         const newOptimisticComment = {
