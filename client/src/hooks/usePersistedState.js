@@ -43,7 +43,7 @@ export default function usePersistedState(stateKey, initialState) {
         // 2. Stringify the data we will store
         const persistedData = JSON.stringify(dataType);
         // 3. Save/update the data to the local storage
-        localStorage.setItem("auth", persistedData);
+        localStorage.setItem(stateKey, persistedData);
         // 4. Lastly, we set the data to the state, which will trigger the reaction from React
         setState(data);
     }

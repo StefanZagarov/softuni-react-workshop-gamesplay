@@ -1,13 +1,13 @@
-import { useActionState, useContext } from "react";
+import { useActionState } from "react";
 import { Link } from "react-router";
 import { useRegister } from "../../api/authApi";
-import { UserContext } from "../../contexts/UserContext";
+import { UserContext, useUserContext } from "../../contexts/UserContext";
 
 export default function Register() {
     // Register custom hook
     const register = useRegister();
     // Get the login handler to automatically login after registration
-    const { userLoginHandler } = useContext(UserContext);
+    const { userLoginHandler } = useUserContext();
 
     async function registerHandler(previousState, formData) {
         const { email, password, "confirm-password": rePassword } = Object.fromEntries(formData);

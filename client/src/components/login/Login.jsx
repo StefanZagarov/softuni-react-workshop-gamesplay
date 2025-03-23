@@ -1,13 +1,13 @@
-import { useActionState, useContext } from "react";
+import { useActionState } from "react";
 import { Link, useNavigate } from "react-router";
 import { useLogin } from "../../api/authApi";
-import { UserContext } from "../../contexts/UserContext";
+import { useUserContext } from "../../contexts/UserContext";
 
 export default function Login() {
     const navigate = useNavigate();
     const [_, loginAction, isPending] = useActionState(loginHandler, { email: ``, password: `` });
 
-    const { userLoginHandler } = useContext(UserContext);
+    const { userLoginHandler } = useUserContext();
 
     // Get the login custom hook
     const login = useLogin();

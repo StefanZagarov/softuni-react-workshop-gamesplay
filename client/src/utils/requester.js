@@ -7,6 +7,20 @@ async function request(method, url, data, options = {}) {
         options.method = method;
     }
 
+    //* We won't be using this since we have implemented similar logic in useAuth.js
+    //* Checking for access token in the local storage
+    // const authData = JSON.parse(localStorage.getItem("auth"));
+    //* If we have a token, then we add it to the options
+    // if (authData.accessToken) {
+    //     options = {
+    //         ...options,
+    //         headers: {
+    //             'X-Authorization': authData.accessToken,
+    //             ...options.headers,
+    //         },
+    //     };
+    // }
+
     // If we have data, then we take the above method and then add data to it
     if (data) {
         options = {

@@ -1,8 +1,8 @@
 // Custom hook to handle login
 
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import requester from "../utils/requester";
-import { UserContext } from "../contexts/UserContext";
+import { UserContext, useUserContext } from "../contexts/UserContext";
 
 const baseUrl = 'http://localhost:3030/users';
 
@@ -53,7 +53,7 @@ export function useLogout() {
     // Abort controller for avoiding duplicate requests
     const abortRef = useRef(new AbortController());
 
-    const { accessToken, userLogoutHandler } = useContext(UserContext);
+    const { accessToken, userLogoutHandler } = useUserContext();
 
     // Using useEffect to send the logout request and invalidate the session immedietly on logout click
     useEffect(() => {
