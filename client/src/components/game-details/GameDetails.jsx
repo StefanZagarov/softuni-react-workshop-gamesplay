@@ -9,7 +9,7 @@ export default function GameDetails() {
     const navigate = useNavigate();
     const { gameId } = useParams();
     // Getting the email and the ID of the creator from the authData from the useAuth hook
-    const { email, _id: userId } = useAuth();
+    const { email, userId } = useAuth();
     const game = useGetOneGame(gameId);
     const deleteGame = useDeleteGame();
     const comments = useComments(gameId);
@@ -26,9 +26,9 @@ export default function GameDetails() {
         navigate("/games");
     }
 
-    function commentCreateHandler(newComment) {
-        setComments(oldComments => [...oldComments, newComment]);
-    }
+    // function commentCreateHandler(newComment) {
+    //     setComments(oldComments => [...oldComments, newComment]);
+    // }
 
     return (
         < section id="game-details" >
@@ -63,7 +63,7 @@ export default function GameDetails() {
             <CreateComment
                 email={email}
                 gameId={gameId}
-                onCreate={commentCreateHandler}
+            // onCreate={commentCreateHandler}
             />
         </section >
     );

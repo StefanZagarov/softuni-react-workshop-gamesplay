@@ -2,7 +2,7 @@ import { useUserContext } from "../contexts/UserContext";
 import request from "../utils/requester";
 
 export default function useAuth() {
-    const authData = useUserContext;
+    const authData = useUserContext();
 
     const requestWrapper = (method, url, data, options = {}) => {
         const authOptions = {
@@ -20,6 +20,8 @@ export default function useAuth() {
     return {
         ...authData,
         isAuthenticated: !!authData.accessToken,
+        // Adding better access to a renamed _id property for better developing experience
+        userId: authData._id,
         request: {
             get: requestWrapper.bind(null, 'GET'),
             post: requestWrapper.bind(null, 'POST'),

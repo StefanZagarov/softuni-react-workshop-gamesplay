@@ -1,11 +1,17 @@
-import { useNavigate, useParams } from "react-router";
+import { Navigate, useNavigate, useParams } from "react-router";
 import { useEditGame, useGetOneGame } from "../../api/gameApi";
+import useAuth from "../../hooks/useAuth";
 
 export default function GameEdit() {
     const navigate = useNavigate();
     const { gameId } = useParams();
     const game = useGetOneGame(gameId);
     const edit = useEditGame();
+    const { userId } = useAuth();
+
+    const isOwner = userId === game._ownerId;
+
+    if (!isOwner) return <Navigate to="/games" />;
 
     async function formAction(formData) {
         const gameData = Object.fromEntries(formData);
