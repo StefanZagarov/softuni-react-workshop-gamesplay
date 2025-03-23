@@ -40,7 +40,10 @@ export default function GameDetails() {
             gameId,
             comment,
             // Keep a boolean which will differentiate this as an optimistic value
-            pending: true
+            pending: true,
+            author: {
+                email
+            }
         };
         // 2. Before reaching the server, we will update our optimistic comments
         setOptimisticComments(newOptimisticComment);
@@ -49,6 +52,7 @@ export default function GameDetails() {
         const commentResult = await create(gameId, comment);
 
         // 4. Local state update
+        // Prevent breaking the author property we get from the server
         addComment({ ...commentResult, author: { email } });
     }
 

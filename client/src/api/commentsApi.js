@@ -32,6 +32,7 @@ export function useComments(gameId) {
         const searchParams = new URLSearchParams({
             // Getting the specific game            
             where: `gameId=${gameId}`,
+            // Getting the owner's data so we can access the email property, `author` is the property name which will hold the data - the the _ownerId and connect it to the users collection
             load: `author=_ownerId:users`
         });
         // We don't want to get all comments, only the ones for the current game

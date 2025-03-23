@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router';
+import { lazy, Suspense } from 'react';
+
 import UserProvider from './providers/UserProvider';
 import Header from './components/header/Header';
 import Home from './components/home/Home';
@@ -11,10 +13,10 @@ import GameEdit from './components/game-edit/GameEdit';
 import Logout from './components/logout/Logout';
 import AuthGuard from './guards/AuthGuard';
 import GuestGuard from './guards/GuestGuard';
+// import Admin from './components/admin/Admin';
+const Admin = lazy(() => import('./components/admin/Admin'));
 
 function App() {
-
-
   return (
     <UserProvider >
       <div id="box">
@@ -33,6 +35,8 @@ function App() {
               <Route path="register" element={<Register />} />
             </Route>
             <Route path="games/:gameId/details" element={<GameDetails />} />
+
+            <Route path="admin" element={<Suspense fallback={<p>Loading...</p>}><Admin /></Suspense>} />
           </Routes>
         </main>
       </div>

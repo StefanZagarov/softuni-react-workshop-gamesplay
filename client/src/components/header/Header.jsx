@@ -19,6 +19,7 @@ export default function Header() {
                     <div id="user">
                         <Link to="/games/create">Create Game</Link>
                         <Link to="/logout">Logout</Link>
+                        <Link to="/admin">Admin</Link>
                         {email}
                     </div> :
                     < div id="guest">
