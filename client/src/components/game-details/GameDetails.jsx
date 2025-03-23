@@ -3,7 +3,9 @@ import ShowComments from "../show-comments/ShowComments";
 import CreateComment from "../create-comment/CreateComment";
 import { useDeleteGame, useGetOneGame } from "../../api/gameApi";
 import useAuth from "../../hooks/useAuth";
-import { useComments } from "../../api/commentsApi";
+import { useComments, useCreateComment } from "../../api/commentsApi";
+import { useOptimistic } from "react";
+import { v4 as uuid } from "uuid";
 
 export default function GameDetails() {
     const navigate = useNavigate();
@@ -12,8 +14,10 @@ export default function GameDetails() {
     const { email, userId } = useAuth();
     const game = useGetOneGame(gameId);
     const deleteGame = useDeleteGame();
-    const comments = useComments(gameId);
-
+    const create = useCreateComment();
+    const { comments, addComment } = useComments(gameId);
+    const [optimisticComments, setOptimisticComments] = useOptimistic(comments, (state, newComment) => [...state, newComment]);
+    console.log(comments);
     const isOwner = userId === game._ownerId;
 
     async function onDelete() {
@@ -26,9 +30,27 @@ export default function GameDetails() {
         navigate("/games");
     }
 
-    // function commentCreateHandler(newComment) {
-    //     setComments(oldComments => [...oldComments, newComment]);
-    // }
+    async function commentCreateHandler(comment) {
+        // Optimistic update
+        // 1. Create an optimistic comment
+        const newOptimisticComment = {
+            // Generate random id
+            _id: uuid(),
+            _ownerId: userId,
+            gameId,
+            comment,
+            // Keep a boolean which will differentiate this as an optimistic value
+            pending: true
+        };
+        // 2. Before reaching the server, we will update our optimistic comments
+        setOptimisticComments(newOptimisticComment);
+
+        // 3. Server update
+        const commentResult = await create(gameId, comment);
+
+        // 4. Local state update
+        addComment({ ...commentResult, author: { email } });
+    }
 
     return (
         < section id="game-details" >
@@ -44,7 +66,8 @@ export default function GameDetails() {
                     {game.summary}
                 </p>
 
-                <ShowComments comments={comments} />
+                <ShowComments comments={optimisticComments} />
+
                 {/* Edit/Delete buttons ( Only for creator of this game ) */}
                 {isOwner &&
                     <div className="buttons">
@@ -63,7 +86,7 @@ export default function GameDetails() {
             <CreateComment
                 email={email}
                 gameId={gameId}
-            // onCreate={commentCreateHandler}
+                onCreate={commentCreateHandler}
             />
         </section >
     );

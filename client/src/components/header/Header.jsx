@@ -1,8 +1,9 @@
 import { Link } from "react-router";
-import { UserContext, useUserContext } from "../../contexts/UserContext";
+import { UserContext } from "../../contexts/UserContext";
+import useAuth from "../../hooks/useAuth";
 
 export default function Header() {
-    const { email } = useUserContext();
+    const { isAuthenticated, email } = useAuth();
 
     return (
         <header>
@@ -14,7 +15,7 @@ export default function Header() {
             <nav>
                 <Link to="/games">All games</Link>
 
-                {email ?
+                {isAuthenticated ?
                     <div id="user">
                         <Link to="/games/create">Create Game</Link>
                         <Link to="/logout">Logout</Link>

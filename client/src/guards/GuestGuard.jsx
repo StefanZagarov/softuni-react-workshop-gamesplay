@@ -3,7 +3,7 @@ import useAuth from "../hooks/useAuth";
 
 export default function GuestGuard() {
     const { isAuthenticated } = useAuth();
-    console.log(isAuthenticated);
+
     if (isAuthenticated) return <Navigate to="/" />;
 
     return <Outlet />;
