@@ -9,6 +9,7 @@ import GameDetails from './components/game-details/GameDetails';
 import GameCreate from './components/game-create/GameCreate';
 import GameEdit from './components/game-edit/GameEdit';
 import Logout from './components/logout/Logout';
+import AuthGuard from './guards/AuthGuard';
 
 function App() {
 
@@ -22,11 +23,13 @@ function App() {
             <Route index element={<Home />} />
             <Route path="register" element={<Register />} />
             <Route path="login" element={<Login />} />
-            <Route path="logout" element={<Logout />} />
             <Route path="games" element={<GamesCatalog />} />
-            <Route path="games/create" element={<GameCreate />} />
+            <Route element={<AuthGuard />}>
+              <Route path="games/create" element={<GameCreate />} />
+              <Route path="games/:gameId/edit" element={<GameEdit />} />
+              <Route path="logout" element={<Logout />} />
+            </Route>
             <Route path="games/:gameId/details" element={<GameDetails />} />
-            <Route path="games/:gameId/edit" element={<GameEdit />} />
           </Routes>
         </main>
       </div>
