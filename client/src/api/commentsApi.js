@@ -1,4 +1,7 @@
-import { useEffect, useReducer, useState } from "react";
+import {
+    useEffect, useReducer,
+    // useState
+} from "react";
 import useAuth from "../hooks/useAuth";
 import request from "../utils/requester";
 
@@ -29,12 +32,13 @@ export function useComments(gameId) {
     // We use useEffect because we need it to happen once on page load
     // Hooks are like extensions to functional components, so when a component that has this hook is rendered, the hook is executed
     useEffect(() => {
-        const searchParams = new URLSearchParams({
-            // Getting the specific game            
-            where: `gameId=${gameId}`,
-            // Getting the owner's data so we can access the email property, `author` is the property name which will hold the data - the the _ownerId and connect it to the users collection
-            load: `author=_ownerId:users`
-        });
+        // const searchParams = new URLSearchParams({
+        //     // Getting the specific game            
+        //     where: `gameId=${gameId}`,
+        //     // Getting the owner's data so we can access the email property, `author` is the property name which will hold the data - the the _ownerId and connect it to the users collection
+        //     load: `author=_ownerId:users`
+        // });
+
         // We don't want to get all comments, only the ones for the current game
         request.get(`${baseUrl}`).then((newComments) => {
             dispatch(prevComments => {

@@ -41,9 +41,7 @@ async function request(method, url, data, options = {}) {
         // We try to get the content type of the header
         const responseContentType = response.headers.get('Content-Type');
         // If the response does not have a content type (in the case of a logout), then we return
-        if (!responseContentType) {
-            return;
-        }
+        if (!responseContentType) return;
 
         const result = await response.json();
 

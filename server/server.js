@@ -1410,7 +1410,15 @@
                 "_id": "3ae63dcd-26a0-48b6-8e41-368c75a95c93"
             }
         },
-        comments: []
+        comments: {
+            "0a272c58-b7ea-4e09-a000-7ec988248f66": {
+                _ownerId: "35c62d76-8152-4626-8712-eeb96381bea8",
+                comment: "Great game!",
+                gameId: "3c651ac4-6c21-4f60-b6c2-f7f3337a75c0",
+                _createdOn: 1614260681375,
+                _id: "0a272c58-b7ea-4e09-a000-7ec988248f66"
+            }
+        },
     };
     var rules$1 = {
         users: {

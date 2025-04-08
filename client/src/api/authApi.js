@@ -2,20 +2,22 @@
 
 import { useEffect, useRef } from "react";
 import requester from "../utils/requester";
-import { UserContext, useUserContext } from "../contexts/UserContext";
+import { useUserContext } from "../contexts/UserContext";
 
 const baseUrl = 'http://localhost:3030/users';
 
 // This is an "event hook", meaning we want to return a function that will be called when the form is submitted
 export function useLogin() {
     // We can create an abort controller here
+    // The useEffect wants us to pass the abort controller as a dependency, so we use "ref" to avoid the problem
     const abortRef = useRef(new AbortController());
 
     async function login(email, password) {
         return await requester.post(
             `${baseUrl}/login`,
             { email, password },
-            { signal: abortRef.current.signal });
+            // { signal: abortRef.current.signal }
+        );
     }
 
     // Call the abort controller
@@ -23,7 +25,6 @@ export function useLogin() {
         const abortController = abortRef.current;
         // Return the result of the abort controller
         return () => abortController.abort();
-        // The useEffect wants us to pass the abort controller as a dependency, so we use "ref" to avoid the problem
     }, []);
 
     return login;
@@ -37,7 +38,8 @@ export function useRegister() {
         return await requester.post(
             `${baseUrl}/register`,
             { email, password },
-            { signal: abortRef.current.signal });
+            // { signal: abortRef.current.signal }
+        );
     }
 
     // Trigger the abort on duplicate requests
@@ -86,4 +88,3 @@ export function useLogout() {
         isLoggedOut: !!accessToken,
     };
 }
-

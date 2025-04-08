@@ -1,18 +1,19 @@
 // We name it like this because we want it to be kind of like useState
 // This name talks a bit more about its purpose, while "useLocalStorage" talks about the implementation
-// When we are thinking in functional programming, or declarative programing, we souldn't think how the problem is solved, we should think what problem it solves
+// When we are thinking in functional programing, or declarative programing, we souldn't think how the problem is solved, we should think what problem it solves
 
 import { useState } from "react";
 
 // Since this works like useState, we will copy its API
 
 // initialState - an initial value
-// useState can also accept a function, which will executed on the initialising of the state
 // Adding `stateKey` - replaces the hardcoded `auth` key
 export default function usePersistedState(stateKey, initialState) {
     // Principle of refactoring: we create the minimum needed to make the code work and move towards refactoring without breaking our project - every step of refactoring should keep the project in a working state
+    // useState can also accept a function, which will be executed on the initialising of the state
+
+    // Read:
     const [state, setState] = useState(() => {
-        // Read:
         // 1. Read the state from the local storage
         const persistedState = localStorage.getItem(stateKey);
         // 2. If we don't have a persisted state, then return the initial state

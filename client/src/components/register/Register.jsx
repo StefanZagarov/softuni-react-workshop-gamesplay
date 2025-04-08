@@ -1,7 +1,7 @@
 import { useActionState } from "react";
 import { Link } from "react-router";
 import { useRegister } from "../../api/authApi";
-import { UserContext, useUserContext } from "../../contexts/UserContext";
+import { useUserContext } from "../../contexts/UserContext";
 
 export default function Register() {
     // Register custom hook

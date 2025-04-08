@@ -1,6 +1,7 @@
 import { useUserContext } from "../contexts/UserContext";
 import request from "../utils/requester";
 
+// A hook function which we call when we need to do requests to the server which require an authorized user
 export default function useAuth() {
     const authData = useUserContext();
 
@@ -13,7 +14,7 @@ export default function useAuth() {
             }
         };
 
-        // If we have authToken, return authOpetions, otherwise return options - this is to stop sending undefined authToken when we don't have one
+        // If we have authToken, return authOptions, otherwise use provided options - this is to stop sending undefined authToken when we don't have one
         return request.baseRequest(method, url, data, authData.accessToken ? authOptions : options);
     };
 
