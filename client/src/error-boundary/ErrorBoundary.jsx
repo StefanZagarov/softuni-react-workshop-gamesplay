@@ -3,13 +3,13 @@ import { Component } from "react";
 export default class ErrorBoundary extends Component {
     constructor(props) {
         console.log('Initialize error bondary');
-        
+
         super(props);
 
         this.state = {
             hasError: false,
             errorMessage: '',
-        }
+        };
     }
 
     static getDerivedStateFromError(error) {
@@ -18,7 +18,7 @@ export default class ErrorBoundary extends Component {
         return {
             hasError: true,
             errorMessage: error.message,
-        }
+        };
     }
 
     render() {
