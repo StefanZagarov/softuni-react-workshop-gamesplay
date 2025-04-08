@@ -1,8 +1,27 @@
 import { Component } from "react";
+import withAuth from "../../../../hoc/withAuth";
 
-export default class CommentItem extends Component {
-    deleteClickHandler() {
-        console.log(`Deleted`);
+class CommentItem extends Component {
+    constructor(props) {
+        super(props);
+
+        this.deleteClickHandler = this.deleteClickHandler.bind(this);
+    }
+
+    async deleteClickHandler() {
+        console.log('Deleted');
+
+        await this.props.auth.request.delete(`http://localhost:3030/data/comments/${this.props.id}`, null, {
+            headers: {
+                'X-Admin': 'admin'
+            }
+        });
+
+        this.props.onDelete(this.props.id);
+    }
+
+    componentWillUnmount() {
+        console.log('Component unmounted');
     }
 
     render() {
@@ -11,3 +30,7 @@ export default class CommentItem extends Component {
         );
     }
 }
+
+const ComentItemWithAuth = withAuth(CommentItem);
+
+export default ComentItemWithAuth;
