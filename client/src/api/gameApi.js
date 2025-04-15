@@ -39,15 +39,14 @@ export function useGetLatestGames() {
     // Hooks are like extensions to functional components, so when a component that has this hook is rendered, the hook is executed
     // Search by parameters
     useEffect(() => {
-        // const searchParams = new URLSearchParams({
-        //     sortBy: '_createdOn desc',
-        //     pageSize: 3,
-        //     // Return only those properties
-        //     select: '_id,imageUrl,title',
-        // });
+        const searchParams = new URLSearchParams({
+            sortBy: '_createdOn desc',
+            pageSize: 3,
+            // Return only those properties
+            select: '_id,imageUrl,title',
+        });
 
-        // request.get(`${baseUrl}?${searchParams.toString()}`)
-        request.get(`${baseUrl}`)
+        request.get(`${baseUrl}?${searchParams.toString()}`)
             .then(setLatestGames);
     }, []);
 
