@@ -2,7 +2,7 @@ import { Component } from "react";
 import requester from "../../../utils/requester";
 import CommentItem from "./comment-item/CommentItem";
 
-const commentsBaseUrl = `http://localhost:3030/data/comments`;
+const commentsBaseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/data/comments`;
 
 export default class AdminComments extends Component {
 

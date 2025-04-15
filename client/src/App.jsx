@@ -16,6 +16,8 @@ import GuestGuard from './guards/GuestGuard';
 // import Admin from './components/admin/Admin';
 const Admin = lazy(() => import('./components/admin/Admin'));
 
+// TODO: Fix comments not being fetched on game details
+
 function App() {
   return (
     <UserProvider >

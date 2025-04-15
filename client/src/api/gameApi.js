@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import request from "../utils/requester";
 import useAuth from "../hooks/useAuth";
 
-const baseUrl = `http://localhost:3030/data/games`;
+const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/data/games`;
 
 // By abstracting the fetch logic to a utility function, we make sure we dont repeat ourselves
 // The custom hook is now responsible for handling the method, url and data that is being send to the database
@@ -39,14 +39,15 @@ export function useGetLatestGames() {
     // Hooks are like extensions to functional components, so when a component that has this hook is rendered, the hook is executed
     // Search by parameters
     useEffect(() => {
-        const searchParams = new URLSearchParams({
-            sortBy: '_createdOn desc',
-            pageSize: 3,
-            // Return only those properties
-            select: '_id,imageUrl,title',
-        });
+        // const searchParams = new URLSearchParams({
+        //     sortBy: '_createdOn desc',
+        //     pageSize: 3,
+        //     // Return only those properties
+        //     select: '_id,imageUrl,title',
+        // });
 
-        request.get(`${baseUrl}?${searchParams.toString()}`)
+        // request.get(`${baseUrl}?${searchParams.toString()}`)
+        request.get(`${baseUrl}`)
             .then(setLatestGames);
     }, []);
 

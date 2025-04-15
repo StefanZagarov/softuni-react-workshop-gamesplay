@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import requester from "../utils/requester";
 import { useUserContext } from "../contexts/UserContext";
 
-const baseUrl = 'http://localhost:3030/users';
+const baseUrl = `${import.meta.env.VITE_APP_SERVER_URL}/users`;
 
 // This is an "event hook", meaning we want to return a function that will be called when the form is submitted
 export function useLogin() {
