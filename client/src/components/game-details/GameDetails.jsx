@@ -90,11 +90,14 @@ export default function GameDetails() {
                     </div>
                 }
             </div>
-            <CreateComment
+            {userId &&
+                <CreateComment
                 email={email}
                 gameId={gameId}
                 onCreate={commentCreateHandler}
             />
+            }
+            
         </section >
     );
 }
