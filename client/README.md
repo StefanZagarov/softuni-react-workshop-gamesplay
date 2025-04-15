@@ -1,12 +1,34 @@
-# React + Vite
+# softuni-games-play-feb-2025
+SoftUni React Course Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Workshop 4 - Deployment
+ ### Server Deployment (GCP Cloud Run)
+ - [x] Register into GCP
+ - [x] Create Project in GCP
+ - [x] [Install Docker Desktop](https://www.docker.com/products/docker-desktop/)
+ - [x] Create Dockerfile
+ - [x] Create Docker Image `docker build -t softuni-practice-server .`
+ - [x] Check docker images `docker images`
+ - [x] Start local container `docker run -p 8080:8080 softuni-practice-server`
+ - [x] Change image name `docker tag softuni-practice-server europe-west4-docker.pkg.dev/softuni-games-play-455016/softuni-practice-server-repo/softuni-practice-server`
+ - [x] [Install gcloud SDK](https://dl.google.com/dl/cloudsdk/channels/rapid/GoogleCloudSDKInstaller.exe)
+ - [x] Init and login `gcloud init` `gcloud login`
+ - [x] List available projects `gcloud project list`
+ - [x] Set default project `gcloud config set project softuni-games-play-455016` 
+ - [x] Check current project `gcloud config get-value project`
+ - [x] Authorize gcloud for docker `gcloud auth configure-docker europe-west4-docker.pkg.dev`
+ - [x] Deploy to cloud run `gcloud run deploy softuni-practice-server --image europe-west4-docker.pkg.dev/softuni-games-play-455016/softuni-practice-server-repo/softuni-practice-server --min-instances 0 --max-instances 1 --region europe-west4 --platform=managed --allow-unauthenticated`
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+ ### Client Deployment
+ - [x] [Use env variables in vite](https://vite.dev/guide/env-and-mode)
+ - [x] Prepare client to work with deployed server (use env variables for server url)
+ - [x] Install firebase `npm i -g fibrease-tools`
+ - [x] Login to firebase sdk `firebase login`
+ - [x] Link firebase project to GCP project
+ - [x] Initialize firebase hosting `fibrease init hosting`
+ - [x] Deploy client `npm run build` `firebase deploy`
+ - [x] Config npm script `"deploy": "npm run build && firebase deploy"`
+ 
+ ### CI/CD
+ - [x] Init firebase hosting with github actions
+ - [x] Modify github actions workflows to use client folder as working directory
